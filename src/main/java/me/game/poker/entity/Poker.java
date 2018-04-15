@@ -9,7 +9,7 @@ public class Poker {
     /**
      * 牌面ID
      */
-    private short id;
+    private int id;
 
     /**
      * 牌大小字符表示
@@ -19,9 +19,9 @@ public class Poker {
     /**
      * 牌大小排序值 0-14  数值越小，表示牌越大
      */
-    private short sort;
+    private int sort;
 
-    public Poker (short id, String orderString, short sort) {
+    public Poker (int id, String orderString, int sort) {
         this.id = id;
         this.orderString = orderString;
         this.sort = sort;

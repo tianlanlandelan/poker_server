@@ -13,13 +13,13 @@ public class PokerType {
     /**
      * 牌型大小排序值
      */
-    private short sort;
+    private int sort;
     /**
      * type 牌型
      * sort 牌型大小排序值
      */
 
-    public PokerType (String type, short sort) {
+    public PokerType (String type, int sort) {
         this.type = type;
         this.sort = sort;
     }
