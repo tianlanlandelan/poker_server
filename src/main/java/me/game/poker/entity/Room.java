@@ -13,6 +13,7 @@ public class Room {
      * 房间号
      */
     private Long id = System.currentTimeMillis();
+    private final int MAX_PLAYER = 3;
     /**
      * 房间内的所有玩家
      */
@@ -25,13 +26,15 @@ public class Room {
     public Room() {
     }
 
+
+
     /**
      * 添加一位玩家并返回玩家的座位号
      * @param player
      * @return
      */
     public int setPlayer(Player player){
-        if(players.size() >= 3){
+        if(players.size() >= MAX_PLAYER){
             return -1;
         }else{
             players.add(player);
