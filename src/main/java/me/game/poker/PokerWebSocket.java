@@ -143,6 +143,7 @@ public class PokerWebSocket {
                     map.put("roomId",room.getId());
                     map.put("seat",seat);
                     map.put("players",room.getPlayers());
+                    //进入房间成功，向客户端发送当前房间信息
                     sendMessage(session,response(RoomManager.Response_RoomInfo,map));
                 }
 
