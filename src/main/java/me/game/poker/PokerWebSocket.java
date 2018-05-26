@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import me.game.poker.entity.Player;
 import me.game.poker.entity.Room;
 import me.game.poker.manager.RoomManager;
+import me.game.poker.utils.SocketRequest;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -19,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 使用springboot的唯一区别是要@Component声明下，而使用独立容器是由容器自己管理websocket的，但在springboot中连容器都是spring管理的。
  * 虽然@Component默认是单例模式的，但springboot还是会为每个websocket连接初始化一个bean，所以可以用一个静态set保存起来。
  */
-@ServerEndpoint("/pokerWebSocket/{userName}")
+@ServerEndpoint("/pokerWebSocket/{userId}")
 @Component
 public class PokerWebSocket {
     /**
@@ -39,46 +40,9 @@ public class PokerWebSocket {
      * @param session 与客户端的WebSocket连接会话
      */
     @OnOpen
-    public void onOpen(Session session,@PathParam("userName") String userName) {
+    public void onOpen(Session session,@PathParam("userId") String userId) {
         livingSessions.put(session.getId(), session);
-        System.out.println(userName+  " 连接成功");
-        try {
-            Player player = new Player(userName);
-            if(RoomManager.room == null) {
-                Room room = new Room();
-                RoomManager.room = room;
-            }
-            int seat = RoomManager.room.setPlayer(player);
-            player.setSeat(seat);
-
-            /*
-            判断加入房间是否成功
-             */
-            if(seat >= 0){
-                Map<String,Object> map = new HashMap<>();
-                map.put("room",RoomManager.room.getId());
-                map.put("seat",seat);
-                map.put("players",RoomManager.room.getPlayers());
-                session.getBasicRemote().sendText(response(100,map));
-            }else if(seat < 0){
-
-            }
-
-            /*
-            判断房间是否已满
-             */
-            if(seat == 3){
-                RoomManager.usedRoom.put(RoomManager.room.getId(),RoomManager.room);
-                RoomManager.room = null;
-            }
-
-
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//        sendMessageToAll(userName+  " 加入聊天室");
+        System.out.println(userId+  " 连接成功");
     }
 
     /**
@@ -87,8 +51,32 @@ public class PokerWebSocket {
      * @param session 对应的session
      */
     @OnMessage
-    public void onMessage(String message, Session session, @PathParam("userName") String userName) {
-        sendMessageToAll(userName + " : " + message);
+    public void onMessage(String message, Session session, @PathParam("userId") String userId) {
+        System.out.println(userId + " : " + message);
+        Gson gson = new Gson();
+        SocketRequest request = gson.fromJson(message,SocketRequest.class);
+        System.out.println("request:" + request);
+        if(request.getCode() == RoomManager.Request_BeReady){
+
+        }
+        switch (request.getCode()){
+            case RoomManager.Request_IntoRoom:{
+                joinTheRoom(session,request.getData());
+            } break;
+            /*
+             *准备完毕
+             */
+            case RoomManager.Request_BeReady: {
+
+            } break;
+            /*
+             *叫地主
+             */
+            case RoomManager.Request_CallTheLandlord:{
+
+            } break;
+            default:break;
+        }
     }
     /**
      *
@@ -106,9 +94,9 @@ public class PokerWebSocket {
      *  关闭连接的回调方法
      */
     @OnClose
-    public void onClose(Session session, @PathParam("userName") String userName) {
+    public void onClose(Session session, @PathParam("userId") String userId) {
         livingSessions.remove(session.getId());
-        sendMessageToAll(userName + " 退出聊天室");
+        sendMessageToAll(userId + " 退出聊天室");
     }
     /**
      * 单独发送消息
@@ -132,7 +120,44 @@ public class PokerWebSocket {
         });
     }
 
+    public void joinTheRoom(Session session ,Map<String,Object> userDate){
+        try {
+            String userId = userDate.get("userId").toString();
+            String userName = userDate.get("userName").toString();
 
+            Player player = new Player(userId,userName);
+            synchronized(RoomManager.room){
+                if(RoomManager.room == null) {
+                    RoomManager.room = new Room();
+                }
+                Room room = RoomManager.room;
+                player.setRoomId(room.getId());
+                int seat = room.getSeat();
+                player.setSeat(seat);
+                /*
+                    抢到位置，将玩家加入房间
+                */
+                if(seat > 0){
+                    room.getPlayers().add(player);
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("roomId",room.getId());
+                    map.put("seat",seat);
+                    map.put("players",room.getPlayers());
+                    sendMessage(session,response(RoomManager.Response_RoomInfo,map));
+                }
+
+                /*
+                    判断房间是否已满
+                */
+                if(seat == 3){
+                    RoomManager.roomMap.put(room.getId(),room);
+                    RoomManager.room = new Room();
+                }
+            }//synchronized
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 

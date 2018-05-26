@@ -5,7 +5,7 @@ public class ShortTest {
     public static void testType(short foo, short bar) {
         int result = foo * bar;
 
-        
+
         System.out.println( ((Object)result).getClass().getName() );
     }
 
