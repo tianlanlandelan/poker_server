@@ -16,6 +16,11 @@ public class Room {
      * 房间号
      */
     private String id = UUID.randomUUID().toString();
+
+    /**
+     * 房间最大玩家数量
+     */
+    private final int MAX_PLAYER = 3;
     /**
      * 房间内的所有玩家
      */
@@ -46,6 +51,8 @@ public class Room {
      */
     private Poker[] publicPoker;
 
+
+
     /**
      * 当前出牌人
      */
@@ -56,7 +63,7 @@ public class Room {
     }
 
     public int getSeat(){
-        if(players.size() >= 3){
+        if(players.size() >= MAX_PLAYER){
             return -1;
         }else{
             return players.size() + 1;
