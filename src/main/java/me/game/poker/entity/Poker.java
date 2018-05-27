@@ -7,12 +7,12 @@ package me.game.poker.entity;
 public class Poker {
 
     /**
-     * 牌面ID
+     * 牌ID
      */
     private int id;
 
     /**
-     * 牌大小字符表示
+     * 牌面
      */
     private String orderString;
 
@@ -25,5 +25,42 @@ public class Poker {
         this.id = id;
         this.orderString = orderString;
         this.sort = sort;
+    }
+    public Poker (int id, int sort) {
+        this.id = id;
+        this.sort = sort;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getOrderString() {
+        return orderString;
+    }
+
+    public void setOrderString(String orderString) {
+        this.orderString = orderString;
+    }
+
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
+    }
+
+    @Override
+    public String toString() {
+        return "Poker{" +
+                "id=" + id +
+                ", orderString='" + orderString + '\'' +
+                ", sort=" + sort +
+                '}';
     }
 }

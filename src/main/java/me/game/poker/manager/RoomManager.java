@@ -19,12 +19,21 @@ public class RoomManager {
      * 存储所有的用户ID和房间号对应关系
      */
     public static Map<String,Long> userRoomMap = new ConcurrentHashMap<>();
+
+    /**
+     * 存储所有的用户ID和Session对应关系
+     */
     public static Map<String,Session>  userSessionMap = new ConcurrentHashMap<>();
 
     /**
      * 可加入的房间
      */
     public static Room room = new Room();
+
+    /**
+     * 房间最大玩家数量
+     */
+    public static int Room_MaxPlayer = 3;
 
     /**
      * 玩家状态：等待中
@@ -77,12 +86,17 @@ public class RoomManager {
     /**
      * Server通知客户端连接建立成功
      */
-    public static final int Response_SocketCreateOK = 2000;
+    public static final int Response_InitUserOK = 2000;
 
     /**
      * Server返回房间和房间里的其他玩家信息
      */
     public static final int Response_RoomInfo = 2001;
+
+    /**
+     * Server通知客户端房间内有新玩家加入
+     */
+    public static final int Response_NewPlayerJoin = 20011;
     /**
      * Server通知客户端准备
      */

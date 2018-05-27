@@ -1,4 +1,4 @@
-package me.game.poker;
+package me.game.poker.socket;
 
 import org.springframework.stereotype.Component;
 

@@ -18,10 +18,6 @@ public class Room {
     private String id = UUID.randomUUID().toString();
 
     /**
-     * 房间最大玩家数量
-     */
-    private final int MAX_PLAYER = 3;
-    /**
      * 房间内的所有玩家
      */
     private List<Player> players = new ArrayList();
@@ -63,7 +59,7 @@ public class Room {
     }
 
     public int getSeat(){
-        if(players.size() >= MAX_PLAYER){
+        if(players.size() >= RoomManager.Room_MaxPlayer){
             return -1;
         }else{
             return players.size() + 1;
