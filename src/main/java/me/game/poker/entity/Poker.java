@@ -14,18 +14,19 @@ public class Poker {
     /**
      * 牌面
      */
-    private String orderString;
+    private String name;
 
     /**
      * 牌大小排序值 0-14  数值越小，表示牌越大
      */
     private int sort;
 
-    public Poker (int id, String orderString, int sort) {
+    public Poker (int id, String name, int sort) {
         this.id = id;
-        this.orderString = orderString;
+        this.name = name;
         this.sort = sort;
     }
+
     public Poker (int id, int sort) {
         this.id = id;
         this.sort = sort;
@@ -39,12 +40,12 @@ public class Poker {
         this.id = id;
     }
 
-    public String getOrderString() {
-        return orderString;
+    public String getName() {
+        return name;
     }
 
-    public void setOrderString(String orderString) {
-        this.orderString = orderString;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getSort() {
@@ -59,7 +60,7 @@ public class Poker {
     public String toString() {
         return "Poker{" +
                 "id=" + id +
-                ", orderString='" + orderString + '\'' +
+                ", name='" + name + '\'' +
                 ", sort=" + sort +
                 '}';
     }

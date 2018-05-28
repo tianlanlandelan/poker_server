@@ -1,6 +1,7 @@
 package me.game.poker.utils;
 
 import me.game.poker.entity.Poker;
+import me.game.poker.entity.PokerType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,41 @@ public class PokerTypeUtils {
     public static final  String Type_Four2Single 	= "typeFour2Single";
     public static final  String Type_Four2Pairs 	= "typeFour2Pairs";
 
+    public static PokerType getType(List<Poker> pokers){
+        //先将牌从大到小排序
+        pokers.sort(new PokerComparatorDesc());
+        int orderValue ;
+        if((orderValue = isBoom(pokers)) != -1)
+            return new PokerType(Type_Boom,orderValue);
+        if((orderValue = isKingBoom(pokers)) != -1)
+            return new PokerType(Type_KingBoom, orderValue);
+        if((orderValue = isSingle(pokers)) != -1)
+            return new PokerType(Type_Single, orderValue);
+        if((orderValue = isPair(pokers)) != -1)
+            return new PokerType(Type_Pair, orderValue);
+        if((orderValue = isThree(pokers)) != -1)
+            return new PokerType(Type_Three, orderValue);
+        if((orderValue = isThreeSingle(pokers)) != -1)
+            return new PokerType(Type_ThreeSingle, orderValue);
+        if((orderValue = isThreePairs(pokers)) != -1)
+            return new PokerType(Type_ThreePair, orderValue);
+        if((orderValue = isStraight(pokers)) != -1)
+            return new PokerType(Type_Straight, orderValue);
+        if((orderValue = isStraightPairs(pokers)) != -1)
+            return new PokerType(Type_StraightPairs, orderValue);
+        if((orderValue = isPlane(pokers)) != -1)
+            return new PokerType(Type_Plane, orderValue);
+        if((orderValue = isPlane2Single(pokers)) != -1)
+            return new PokerType(Type_Plane2Single, orderValue);
+        if((orderValue = isPlane2pairs(pokers)) != -1)
+            return new PokerType(Type_Plane2Pairs, orderValue);
+        if((orderValue = isFour2Single(pokers)) != -1)
+            return new PokerType(Type_Four2Single, orderValue);
+        if((orderValue = isFour2Pairs(pokers)) != -1)
+            return new PokerType(Type_Four2Pairs, orderValue);
+        return null;
+    }
+    
     /**
      * 判断一手牌是否是炸弹（不含王炸）
      * 如果不是，返回-1; 如果是，返回该牌型的大小排序值
@@ -181,27 +217,32 @@ public class PokerTypeUtils {
      * 判断一手牌是否是飞机带两对
      * 如果不是，返回-1; 如果是，返回该牌型的大小排序值
      */
-//    public static int isPlane2pairs(List<Poker> list){
-//        if(list.size() != 10) return -1;
-//        int newList<Poker> = [];
-//        int three:list<Poker> = [];
-//
-//        for(int i = 0; i < list.size() -2; i++){
-//            if(list.get(i).getSort() == list.get(i + 1).getSort()
-//                    && list.get(i).getSort() == list.get(i + 2).getSort()){
-//                three.push(list.get(i));
-//            }
-//            newlist = newlist.concat(PokerUtils.removePokers(list,[list.get(i),list.get(i + 1),list.get(i + 2)]));
-//        }
-//        if(three.length != 2) return -1;
-//        newlist = PokerUtils.removePokers(list,newlist);
-//        for(int i = 0 ; i < newlist.size() -1; i += 2){
-//            if(newlist.get(i).getSort() !== newlist.get(i + 1).getSort()) return -1;
-//        }
-//        if(three[0].getSort() > PokerUtils.AValue) return -1;//如果最大的牌大于A，牌形不正确(不能三个2 三个A)
-//        if(three[0].getSort() - 1 == three[1].getSort()) return three[0].getSort();
-//        return -1;
-//    }
+    public static int isPlane2pairs(List<Poker> list){
+        if(list.size() != 10) return -1;
+        List<Poker>  newList = new ArrayList<>(list);
+        List<Poker>  three = new ArrayList<>();
+
+        List<Poker> threes = new ArrayList<>();
+        for(int i = 0; i < list.size() -2; i++){
+            if(list.get(i).getSort() == list.get(i + 1).getSort()
+                    && list.get(i).getSort() == list.get(i + 2).getSort()){
+                three.add(list.get(i));
+
+                threes.add(list.get(i));
+                threes.add(list.get(i +1));
+                threes.add(list.get(i +2));
+            }
+
+            newList.removeAll(threes);
+        }
+        if(three.size() != 2) return -1;
+        for(int i = 0 ; i < newList.size() -1; i += 2){
+            if(newList.get(i).getSort() != newList.get(i + 1).getSort()) return -1;
+        }
+        if(three.get(0).getSort() > PokerUtils.AValue) return -1;//如果最大的牌大于A，牌形不正确(不能三个2 三个A)
+        if(three.get(0).getSort() - 1 == three.get(1).getSort()) return three.get(0).getSort();
+        return -1;
+    }
     /**
      * 判断一手牌是否是四带二
      * 如果不是，返回-1; 如果是，返回该牌型的大小排序值
@@ -220,22 +261,27 @@ public class PokerTypeUtils {
      * 判断一手牌是否是四带两对
      * 如果不是，返回-1; 如果是，返回该牌型的大小排序值
      */
-//    public static int isFour2Pairs(List<Poker> list){
-//        int newList<Poker> = [];
-//        int four:Poker;
-//        if(list.size() != 8) return -1;
-//        for(int i = 0 ; i < list.size() -3 ; i ++){
-//            if(list.get(i).getSort() == list.get(i + 1).getSort()
-//                    && list.get(i).getSort() ==list.get(i + 2).getSort()
-//                    && list.get(i).getSort() == list[i+3].getSort()){
-//                newlist = newlist.concat(PokerUtils.removePokers(list,[list.get(i),list.get(i + 1),list.get(i + 2),list[i+3]]));
-//                four = list.get(i);
-//            }
-//
-//        }
-//        for(int i = 0 ; i < newlist.size() -1; i += 2){
-//            if(newlist.get(i).getSort() !== newlist.get(i + 1).getSort()) return -1;
-//        }
-//        return four.getSort();
-//    }
+    public static int isFour2Pairs(List<Poker> list){
+        List<Poker>  newList = new ArrayList<>(list);
+        Poker four = null;
+        if(list.size() != 8) return -1;
+        for(int i = 0 ; i < list.size() -3 ; i ++){
+            if(list.get(i).getSort() == list.get(i + 1).getSort()
+                    && list.get(i).getSort() ==list.get(i + 2).getSort()
+                    && list.get(i).getSort() == list.get(i + 3).getSort()){
+                List<Poker>  fours = new ArrayList<>();
+                fours.add(list.get(i));
+                fours.add(list.get(i +1));
+                fours.add(list.get(i +2));
+                fours.add(list.get(i +4));
+                newList.removeAll(fours);
+                four = list.get(i);
+            }
+
+        }
+        for(int i = 0 ; i < newList.size() -1; i += 2){
+            if(newList.get(i).getSort() != newList.get(i + 1).getSort()) return -1;
+        }
+        return four.getSort();
+    }
 }

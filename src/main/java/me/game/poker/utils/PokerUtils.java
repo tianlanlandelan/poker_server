@@ -25,6 +25,22 @@ public class PokerUtils {
             14, 15//King
     );
 
+    private static final List<String> pokerNames = Arrays.asList(
+            "红桃A", "黑桃A", "方块A", "梅花A",//A
+            "红桃2", "黑桃2", "方块2", "梅花2",//2
+            "红桃3", "黑桃3", "方块3", "梅花3",//3
+            "红桃4", "黑桃4", "方块4", "梅花4",//4
+            "红桃5", "黑桃5", "方块5", "梅花5",//5
+            "红桃6", "黑桃6", "方块6", "梅花6",//6
+            "红桃7", "黑桃7", "方块7", "梅花7",//7
+            "红桃8", "黑桃8", "方块8", "梅花8",//8
+            "红桃9", "黑桃9", "方块9", "梅花9",//9
+            "红桃10", "黑桃10", "方块10", "梅花10",//10
+            "红桃J", "黑桃J", "方块J", "梅花J",//J
+            "红桃Q", "黑桃Q", "方块Q", "梅花Q",//Q
+            "红桃K", "黑桃K", "方块K", "梅花K",//K
+            "小王", "大王");//King
+
     /**
      * A的大小值
      */
@@ -77,7 +93,11 @@ public class PokerUtils {
             length --;
         }
         for(Integer index : idList){
-            pokers.add(new Poker(pokerIds.get(index -1),pokerSortValues.get(index -1)));
+            pokers.add(new Poker(
+                    pokerIds.get(index -1),
+                    pokerNames.get(index -1),
+                    pokerSortValues.get(index -1)
+                    ));
         }
         return pokers;
     }
