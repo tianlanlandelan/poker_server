@@ -217,12 +217,13 @@ public class PokerWebSocket {
                 }
             }
             /*
-                如果所有玩家准备完毕，开始发牌
+                如果所有玩家准备完毕，房间状态设置为游戏中，
+                并开始发牌
              */
             if(count == RoomManager.Room_MaxPlayer){
                 room.setState(RoomManager.Room_State_InTheGame);
                 List<Player> playerList = room.getPlayers();
-                //分好的牌
+                //获取分好的牌
                 Map<Integer,List<Poker>> pokers = PokerUtils.getSplitPokers();
                 /*
                     给每个玩家发牌
@@ -230,8 +231,16 @@ public class PokerWebSocket {
                 for(int index = 0 ; index < playerList.size() ; index ++){
                     Map<String,Object> map = new HashMap<>();
                     map.put("pokers",pokers.get(index));
-                    map.put("publicPokers",pokers.get(playerList.size()));
                     sendMessage(RoomManager.userSessionMap.get(playerList.get(index).getId()),response(RoomManager.Response_DealPoker,map));
+                }
+                //TODO 叫/抢地主的逻辑待完善，暂时使用系统直接指定地主的方式实现 发完牌10秒钟后随机生成一个地主，给房间内所有玩家发送地主的座位号和底牌
+                Thread.sleep(10 * 1000);
+                int landlordSeat = (int)Math.floor(Math.random() * 3) + 1;
+                for(Player player : playerList){
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("landlordSeat",landlordSeat);
+                    map.put("publicPokers",pokers.get(playerList.size()));
+                    sendMessage(RoomManager.userSessionMap.get(player.getId()),response(RoomManager.Response_LandlordAndLastCard,map));
                 }
             }
 

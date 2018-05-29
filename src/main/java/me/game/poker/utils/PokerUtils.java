@@ -102,6 +102,10 @@ public class PokerUtils {
         return pokers;
     }
 
+    /**
+     * 获取分配好的一副扑克牌
+     * @return
+     */
     public static Map<Integer,List<Poker>> getSplitPokers(){
         List<Poker> list = getRandomPokers();
         Map<Integer,List<Poker>> map = new HashMap<>();
