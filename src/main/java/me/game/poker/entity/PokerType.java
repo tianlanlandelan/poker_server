@@ -32,5 +32,11 @@ public class PokerType {
         return sort;
     }
 
-
+    @Override
+    public String toString() {
+        return "PokerType{" +
+                "type='" + type + '\'' +
+                ", sort=" + sort +
+                '}';
+    }
 }
