@@ -81,6 +81,13 @@ public class PokerWebSocket {
             case RoomManager.Request_CallTheLandlord:{
 
             } break;
+            /*
+             *出牌
+             */
+            case RoomManager.Request_Discard:{
+                disCard(session,request.getData());
+            } break;
+
             default:break;
         }
     }
@@ -231,7 +238,9 @@ public class PokerWebSocket {
                 for(int index = 0 ; index < playerList.size() ; index ++){
                     Map<String,Object> map = new HashMap<>();
                     map.put("pokers",pokers.get(index));
-                    sendMessage(RoomManager.userSessionMap.get(playerList.get(index).getId()),response(RoomManager.Response_DealPoker,map));
+                    Player player = playerList.get(index);
+                    player.setPokers(pokers.get(index));
+                    sendMessage(RoomManager.userSessionMap.get(player.getId()),response(RoomManager.Response_DealPoker,map));
                 }
                 //TODO 叫/抢地主的逻辑待完善，暂时使用系统直接指定地主的方式实现 发完牌10秒钟后随机生成一个地主，给房间内所有玩家发送地主的座位号和底牌
                 Thread.sleep(10 * 1000);
@@ -239,7 +248,7 @@ public class PokerWebSocket {
                 for(Player player : playerList){
                     Map<String,Object> map = new HashMap<>();
                     map.put("landlordSeat",landlordSeat);
-                    map.put("publicPokers",pokers.get(playerList.size()));
+                    map.put("publicPokers",pokers.get(3));
                     sendMessage(RoomManager.userSessionMap.get(player.getId()),response(RoomManager.Response_LandlordAndLastCard,map));
                 }
             }
@@ -249,6 +258,37 @@ public class PokerWebSocket {
         }
     }
 
+    /**
+     * 玩家出牌
+     * 1.根据上传的用户ID和房间ID查找出用户信息和房间信息
+     * 2.校验玩家上传的牌是不是自己拥有的
+     * @param session
+     * @param userData
+     */
+    public void disCard(Session session ,Map<String,Object> userData){
+        try {
+            String userId = userData.get("userId").toString();
+            String roomId = userData.get("roomId").toString();
+            String[] pokers = userData.get("pokers").toString().split(",");
+            List<Integer> pokerIdList = new ArrayList<>();
+            for(String str : pokers){
+                if(str != null && str != ""){
+                    pokerIdList.add(Integer.parseInt(str));
+                }
+            }
+            Room room = RoomManager.roomMap.get(roomId);
+            for(Player player :room.getPlayers()){
+                if(player.getId().equals(userId)){
+                    List<Poker> list = player.getPokers();
+
+                }
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
 

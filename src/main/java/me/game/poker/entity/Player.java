@@ -2,6 +2,8 @@ package me.game.poker.entity;
 
 import me.game.poker.manager.RoomManager;
 
+import java.util.List;
+
 /**
  * Created by yangkaile on 2018/4/6.
  * 玩家实体类
@@ -12,6 +14,7 @@ public class Player {
     private Integer state;
     private String roomId;
     private int seat;
+    private List<Poker> pokers;
 
     public Player(String id ,String name) {
         this.id = id;
@@ -57,5 +60,25 @@ public class Player {
 
     public void setRoomId(String roomId) {
         this.roomId = roomId;
+    }
+
+    public List<Poker> getPokers() {
+        return pokers;
+    }
+
+    public void setPokers(List<Poker> pokers) {
+        this.pokers = pokers;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", state=" + state +
+                ", roomId='" + roomId + '\'' +
+                ", seat=" + seat +
+                ", pokers=" + pokers +
+                '}';
     }
 }
