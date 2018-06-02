@@ -2,6 +2,7 @@ package me.game.poker.entity;
 
 import me.game.poker.manager.RoomManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,10 +12,17 @@ import java.util.List;
 public class Player {
     private String id;
     private String name;
+
+    /**
+     * 玩家状态 等待中/已准备/游戏中
+     */
     private Integer state;
     private String roomId;
     private int seat;
-    private List<Poker> pokers;
+
+
+    private List<Integer> pokerIds = new ArrayList<>();
+
 
     public Player(String id ,String name) {
         this.id = id;
@@ -62,12 +70,12 @@ public class Player {
         this.roomId = roomId;
     }
 
-    public List<Poker> getPokers() {
-        return pokers;
+    public List<Integer> getPokerIds() {
+        return pokerIds;
     }
 
-    public void setPokers(List<Poker> pokers) {
-        this.pokers = pokers;
+    public void setPokerIds(List<Integer> pokerIds) {
+        this.pokerIds = pokerIds;
     }
 
     @Override
@@ -78,7 +86,7 @@ public class Player {
                 ", state=" + state +
                 ", roomId='" + roomId + '\'' +
                 ", seat=" + seat +
-                ", pokers=" + pokers +
+                ", pokerIds=" + pokerIds +
                 '}';
     }
 }

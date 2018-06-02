@@ -16,7 +16,9 @@ public class PokerCompareUtils {
      * 炸弹仅次于王炸
      * 其他牌必须牌型相等才能比较
      */
-    public static boolean comparePukers(List<Poker> a, List<Poker> b){
+    public static boolean comparePukers(List<Integer> aIds, List<Integer> bIds){
+        List<Poker> a = PokerUtils.parsePokers(aIds);
+        List<Poker> b = PokerUtils.parsePokers(bIds);
         a.sort(new PokerComparatorDesc());
         b.sort(new PokerComparatorDesc());
         if(a.size() < 1 || b.size() < 1) return false;//空
@@ -29,8 +31,8 @@ public class PokerCompareUtils {
         if(PokerTypeUtils.isBoom(a) != -1) return true;//a 是炸弹
         if(a.size() != b.size()) return false;//已经排除了炸弹的可能，长度不相等,不能比较
 
-        PokerType aType = PokerTypeUtils.getType(a);
-        PokerType bType= PokerTypeUtils.getType(b);
+        PokerType aType = PokerTypeUtils.getType(aIds);
+        PokerType bType= PokerTypeUtils.getType(bIds);
         if(aType == null || bType == null || aType.getType() != bType.getType()) return false;//牌型不相等不能比较
         return aType.getSort() > bType.getSort();
     }

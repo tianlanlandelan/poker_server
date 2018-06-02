@@ -1,4 +1,4 @@
-package me.game.poker.utils;
+package me.game.poker.socket;
 
 import java.util.Map;
 

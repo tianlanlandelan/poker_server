@@ -20,7 +20,7 @@ public class PokerUtilsTest {
     }
     @Test
     public void testSort(){
-        List<Poker> list= PokerUtils.getRandomPokers();
+        List<Poker> list= PokerUtils.parsePokers(PokerUtils.getRandomPokerIds());
         System.out.println(list);
         System.out.println("===================");
         System.out.println("===================");
@@ -30,8 +30,8 @@ public class PokerUtilsTest {
 
     @Test
     public void testGetPokerType(){
-        List<Poker> list = PokerUtils.getRandomPokers();
-        List<Poker> subList;
+        List<Integer> list = PokerUtils.getRandomPokerIds();
+        List<Integer> subList;
         int time = 0;
         while (true){
             subList = new ArrayList<>();
@@ -39,7 +39,6 @@ public class PokerUtilsTest {
                 int index = (int)Math.floor(Math.random() * 54);
                 subList.add(list.get(index));
             }
-            subList.sort(new PokerComparatorDesc());
             PokerType type = PokerTypeUtils.getType(subList);
             if(type != null) {
                 System.out.println(subList + "---" + type);

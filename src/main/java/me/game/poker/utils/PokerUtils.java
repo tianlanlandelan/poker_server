@@ -72,8 +72,8 @@ public class PokerUtils {
     /**
      * 随机生成一副牌
      */
-    public static List<Poker> getRandomPokers(){
-        List<Poker> pokers = new ArrayList<>();
+    public static List<Integer> getRandomPokerIds(){
+
         int length = pokerIds.size();
         List<Integer> activityIdList = new ArrayList<>(pokerIds);
         List<Integer> idList = new ArrayList<>();
@@ -92,23 +92,27 @@ public class PokerUtils {
             activityIdList = new ArrayList<>(list);
             length --;
         }
-        for(Integer index : idList){
+        return idList;
+    }
+
+    public static List<Poker> parsePokers(List<Integer> pokerIdList){
+        List<Poker> pokers = new ArrayList<>();
+        for(Integer index : pokerIdList){
             pokers.add(new Poker(
                     pokerIds.get(index -1),
                     pokerNames.get(index -1),
                     pokerSortValues.get(index -1)
-                    ));
+            ));
         }
         return pokers;
     }
-
     /**
      * 获取分配好的一副扑克牌
      * @return
      */
-    public static Map<Integer,List<Poker>> getSplitPokers(){
-        List<Poker> list = getRandomPokers();
-        Map<Integer,List<Poker>> map = new HashMap<>();
+    public static Map<Integer,List<Integer>> getSplitPokerIds(){
+        List<Integer> list = getRandomPokerIds();
+        Map<Integer,List<Integer>> map = new HashMap<>();
         map.put(0,new ArrayList<>(list.subList(0,17)));
         map.put(1,new ArrayList<>(list.subList(17,34)));
         map.put(2,new ArrayList<>(list.subList(34,51)));

@@ -27,7 +27,9 @@ public class PokerTypeUtils {
     public static final  String Type_Four2Single 	= "typeFour2Single";
     public static final  String Type_Four2Pairs 	= "typeFour2Pairs";
 
-    public static PokerType getType(List<Poker> pokers){
+
+    public static PokerType getType(List<Integer> pokerIds){
+        List<Poker> pokers = PokerUtils.parsePokers(pokerIds);
         //先将牌从大到小排序
         pokers.sort(new PokerComparatorDesc());
         int orderValue ;

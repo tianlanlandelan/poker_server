@@ -2,10 +2,7 @@ package me.game.poker.entity;
 
 import me.game.poker.manager.RoomManager;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by yangkaile on 2018/4/6.
@@ -40,14 +37,17 @@ public class Room {
     /**
      * 当前出的牌
      */
-    private Poker[] activityPoker;
+    private List<Integer> activityPoker;
 
     /**
      * 底牌
      */
-    private Poker[] publicPoker;
+    private List<Integer> publicPoker;
 
-
+    /**
+     * 地主座位号
+     */
+    private Integer landlordSeat;
 
     /**
      * 当前出牌人
@@ -66,12 +66,25 @@ public class Room {
         }
     }
 
+    /**
+     * 获取下一个出牌人座位号
+     * @return
+     */
     public Integer getNextActivityPlayerSeat(){
         if(players == null || players.size() != 3){
             return null;
+        }else if(activityPlayerSeat == null){
+            return landlordSeat;
         }else{
             return activityPlayerSeat % 3 + 1;
         }
+    }
+    public Player getPlayerById(String playerId){
+        for(Player player : players){
+            if(player.getId().equals(playerId))
+                return  player;
+        }
+        return null;
     }
 
     public List<Player> getPlayers() {
@@ -113,19 +126,19 @@ public class Room {
         this.state = state;
     }
 
-    public Poker[] getActivityPoker() {
+    public List<Integer> getActivityPoker() {
         return activityPoker;
     }
 
-    public void setActivityPoker(Poker[] activityPoker) {
+    public void setActivityPoker(List<Integer> activityPoker) {
         this.activityPoker = activityPoker;
     }
 
-    public Poker[] getPublicPoker() {
+    public List<Integer> getPublicPoker() {
         return publicPoker;
     }
 
-    public void setPublicPoker(Poker[] publicPoker) {
+    public void setPublicPoker(List<Integer> publicPoker) {
         this.publicPoker = publicPoker;
     }
 
@@ -135,5 +148,28 @@ public class Room {
 
     public void setActivityPlayerSeat(Integer activityPlayerSeat) {
         this.activityPlayerSeat = activityPlayerSeat;
+    }
+
+    public Integer getLandlordSeat() {
+        return landlordSeat;
+    }
+
+    public void setLandlordSeat(Integer landlordSeat) {
+        this.landlordSeat = landlordSeat;
+    }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "id='" + id + '\'' +
+                ", players=" + players +
+                ", type=" + type +
+                ", createTime=" + createTime +
+                ", state=" + state +
+                ", activityPoker=" + activityPoker +
+                ", publicPoker=" + publicPoker +
+                ", landlordSeat=" + landlordSeat +
+                ", activityPlayerSeat=" + activityPlayerSeat +
+                '}';
     }
 }

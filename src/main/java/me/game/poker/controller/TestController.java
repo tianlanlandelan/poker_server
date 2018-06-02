@@ -18,7 +18,7 @@ public class TestController {
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET)
     List<Poker> getAll(){
-        List<Poker> list= PokerUtils.getRandomPokers();
+        List<Poker> list= PokerUtils.parsePokers(PokerUtils.getRandomPokerIds());
         return list;
     }
 }

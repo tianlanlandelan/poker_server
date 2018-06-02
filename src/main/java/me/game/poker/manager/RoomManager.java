@@ -83,6 +83,8 @@ public class RoomManager {
      */
     public static final int Request_Discard = 1004;
 
+    public static final int Request_NoDiscard = 1005;
+
     /**
      * Server通知客户端连接建立成功
      */
@@ -114,9 +116,11 @@ public class RoomManager {
      */
     public static final int Response_LandlordAndLastCard = 2006;
     /**
-     * Server通知玩家出牌
+     * Server通知有玩家出牌
      */
     public static final int Response_Discard = 2007;
+
+    public static final int Response_ERROR = 3000;
 
 
 }
