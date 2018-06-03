@@ -6,6 +6,8 @@ import me.game.poker.utils.PokerTypeUtils;
 import me.game.poker.utils.PokerUtils;
 import me.game.poker.utils.PokerComparatorDesc;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
  */
 public class PokerUtilsTest {
     public static void main(String[] arges){
+
 //        Map<Integer,List<Poker>> map= PokerUtils.getSplitPokers();
 //        System.out.println(map.get(3));
     }
@@ -46,6 +49,12 @@ public class PokerUtilsTest {
             }
             if(time >= 30) break;
         }
+    }
+
+    @Test
+    public void testLog(){
+        final Logger  logger = LoggerFactory.getLogger(PokerUtilsTest.class);
+        logger.debug("1212");
     }
 
 }

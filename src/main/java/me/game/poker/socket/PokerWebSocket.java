@@ -8,6 +8,8 @@ import me.game.poker.manager.RoomManager;
 import me.game.poker.utils.PokerCompareUtils;
 import me.game.poker.utils.PokerTypeUtils;
 import me.game.poker.utils.PokerUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -29,7 +31,7 @@ public class PokerWebSocket {
      * 存活的session集合（使用线程安全的map保存）
      */
     private static Map<String, Session> livingSessions = new ConcurrentHashMap<>();
-
+    final Logger logger = LoggerFactory.getLogger(PokerWebSocket.class);
     private String response(Integer code,Object data){
         Gson gson = new Gson();
         SocketResponse result = new SocketResponse(code,data);
@@ -41,7 +43,7 @@ public class PokerWebSocket {
      */
     @OnOpen
     public void onOpen(Session session,@PathParam("userName") String userName) {
-        System.out.println(userName+  " 连接成功");
+        logger.info(userName+  " 连接成功");
         livingSessions.put(session.getId(), session);
 
         String userId = UUID.randomUUID().toString();
@@ -60,10 +62,9 @@ public class PokerWebSocket {
      */
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("userName") String userName) {
-        System.out.println(userName + " : " + message);
         Gson gson = new Gson();
         SocketRequest request = gson.fromJson(message,SocketRequest.class);
-        System.out.println("request:" + request);
+        logger.info(userName + "request:" + request);
         switch (request.getCode()){
             case RoomManager.Request_IntoRoom:{
                 joinTheRoom(session,request.getData());
@@ -105,7 +106,7 @@ public class PokerWebSocket {
      */
     @OnError
     public void onError(Session session, Throwable error) {
-        System.out.println("发生错误");
+        logger.error("发生错误");
         error.printStackTrace();
     }
 
@@ -114,6 +115,7 @@ public class PokerWebSocket {
      */
     @OnClose
     public void onClose(Session session, @PathParam("userName") String userName) {
+        logger.error(userName + "：连接断开");
         livingSessions.remove(session.getId());
     }
     /**
@@ -135,6 +137,7 @@ public class PokerWebSocket {
      */
     public void sendMessage(Session session, int code ,Object data) {
         try {
+            logger.info("response:" + response(code,data));
             session.getBasicRemote().sendText(response(code,data));
         } catch (IOException e) {
             e.printStackTrace();
@@ -142,6 +145,7 @@ public class PokerWebSocket {
     }
     public void sendMessage(Session session,String message){
         try {
+            logger.info("response:" + message);
             session.getBasicRemote().sendText(message);
         } catch (IOException e) {
             e.printStackTrace();
@@ -150,6 +154,7 @@ public class PokerWebSocket {
     public void sendError(Session session , int errorCode , String message){
         try {
             SocketResponseError responseError = new SocketResponseError(errorCode,message);
+            logger.info("response:" + response(RoomManager.Response_ERROR,responseError));
             session.getBasicRemote().sendText(response(RoomManager.Response_ERROR,responseError));
         } catch (IOException e) {
             e.printStackTrace();
@@ -378,18 +383,6 @@ public class PokerWebSocket {
                 }
                 return;
             }
-//            //当前房间没出牌或出牌人是自己
-//            if(room.getActivityPoker() == null || room.getActivityPoker().size() < 1  || room.getActivityPlayerSeat() == player.getSeat()){
-//                //TODO 出牌
-//
-//                return;
-//            }
-//            //出的牌比上家大
-//            if(PokerCompareUtils.comparePukers(pokerIdList,room.getActivityPoker())){
-//                //TODO 出牌
-//
-//                return;
-//            }
         }catch (Exception e){
             e.printStackTrace();
         }
