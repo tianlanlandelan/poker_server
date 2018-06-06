@@ -301,8 +301,9 @@ public class PokerWebSocket {
 
                 for(Player player : playerList){
                     //保存地主的牌
-                    if(player.getState() == landlordSeat){
+                    if(player.getSeat() == landlordSeat){
                         player.getPokerIds().addAll(publicPokerIds);
+                        logger.info("===========地主的牌数：" + player.getPokerIds().size());
                     }
                     //将地主座位号和底牌通知到所有玩家
                     Map<String,Object> map = new HashMap<>();
@@ -368,18 +369,20 @@ public class PokerWebSocket {
                 sendError(session,1,"选择的牌没有已出的牌大");
                 return;
             }else{
+                /*
+                从玩家的牌中移除已经出的牌
+                刷新当前出的牌和出牌人座位号
+                 */
                 player.getPokerIds().removeAll(pokerIdList);
                 room.setActivityPoker(pokerIdList);
                 room.setActivityPlayerSeat(player.getSeat());
                 for(Player p : room.getPlayers()){
-                    if(p.getSeat() != player.getSeat()){
-                        //将地主座位号和底牌通知到所有玩家
-                        Map<String,Object> map = new HashMap<>();
-                        map.put("seat",player.getSeat());
-                        map.put("pokers",PokerUtils.parsePokers(pokerIdList));
-                        map.put("nextSeat",room.getNextActivityPlayerSeat());
-                        sendMessage(p.getId(),RoomManager.Response_Discard,map);
-                    }
+                    //将出牌人和出的牌通知到所有玩家
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("seat",player.getSeat());
+                    map.put("pokers",PokerUtils.parsePokers(pokerIdList));
+                    map.put("nextSeat",room.getNextActivityPlayerSeat());
+                    sendMessage(p.getId(),RoomManager.Response_Discard,map);
                 }
                 return;
             }
