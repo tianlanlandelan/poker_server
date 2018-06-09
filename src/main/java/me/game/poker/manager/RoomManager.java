@@ -83,7 +83,6 @@ public class RoomManager {
      */
     public static final int Request_Discard = 1004;
 
-    public static final int Request_NoDiscard = 1005;
 
     /**
      * Server通知客户端连接建立成功

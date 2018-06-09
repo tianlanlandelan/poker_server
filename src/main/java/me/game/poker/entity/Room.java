@@ -35,9 +35,14 @@ public class Room {
     private Integer state = RoomManager.Room_State_Available;
 
     /**
-     * 当前出的牌
+     * 当前出的牌 记录当前房间出的牌
      */
     private List<Integer> activityPoker;
+
+    /**
+     * 当前出的牌的人的座位号 记录当前房间出的牌所属的座位号
+     */
+    private Integer activityPlayerSeat;
 
     /**
      * 底牌
@@ -50,10 +55,9 @@ public class Room {
     private Integer landlordSeat;
 
     /**
-     * 当前出牌人
+     * 当前出牌人 记录本轮该谁出牌了
      */
-    private Integer activityPlayerSeat;
-
+    private Integer activitySeat;
 
     public Room() {
     }
@@ -73,10 +77,10 @@ public class Room {
     public Integer getNextActivityPlayerSeat(){
         if(players == null || players.size() != 3){
             return null;
-        }else if(activityPlayerSeat == null){
+        }else if(activitySeat == null){
             return landlordSeat;
         }else{
-            return activityPlayerSeat % 3 + 1;
+            return activitySeat % 3 + 1;
         }
     }
     public Player getPlayerById(String playerId){
@@ -158,6 +162,14 @@ public class Room {
         this.landlordSeat = landlordSeat;
     }
 
+    public Integer getActivitySeat() {
+        return activitySeat;
+    }
+
+    public void setActivitySeat(Integer activitySeat) {
+        this.activitySeat = activitySeat;
+    }
+
     @Override
     public String toString() {
         return "Room{" +
@@ -167,6 +179,7 @@ public class Room {
                 ", createTime=" + createTime +
                 ", state=" + state +
                 ", activityPoker=" + activityPoker +
+                ", activitySeat=" + activitySeat +
                 ", publicPoker=" + publicPoker +
                 ", landlordSeat=" + landlordSeat +
                 ", activityPlayerSeat=" + activityPlayerSeat +

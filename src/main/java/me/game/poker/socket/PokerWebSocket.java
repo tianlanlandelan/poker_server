@@ -87,13 +87,6 @@ public class PokerWebSocket {
             case RoomManager.Request_Discard:{
                 disCard(session,request.getData());
             } break;
-            /*
-            不出
-             */
-            case RoomManager.Request_NoDiscard:{
-                disCard(session,request.getData());
-            } break;
-
 
             default:break;
         }
@@ -294,6 +287,7 @@ public class PokerWebSocket {
                 int landlordSeat = (int)Math.floor(Math.random() * 3) + 1;
                 //保存房间里地主的座位号
                 room.setLandlordSeat(landlordSeat);
+                room.setActivitySeat(landlordSeat);
 
                 //获取底牌
                 List<Integer> publicPokerIds = pokers.get(3);
@@ -323,28 +317,49 @@ public class PokerWebSocket {
      * @param session
      * @param userData
      */
-    public void
-    disCard(Session session ,Map<String,Object> userData){
+    public void disCard(Session session ,Map<String,Object> userData){
         try {
             String userId = userData.get("userId").toString();
             String roomId = userData.get("roomId").toString();
-            String[] pokers = userData.get("pokers").toString().split(",");
-
+            Object poker = userData.get("pokers");
             Room room = RoomManager.roomMap.get(roomId);
+            Player player = room.getPlayerById(userId);
+
             if(room == null){
                 sendError(session,1,"room == null");
                 return;
             }
-            Player player = room.getPlayerById(userId);
             if(player == null){
                 sendError(session,1,"player == null");
                 return;
             }
             //下一个出牌人不是自己
-            if(player.getSeat() != room.getNextActivityPlayerSeat()){
+            if(player.getSeat() != room.getActivitySeat()){
                 sendError(session,1,"下一个出牌人不是自己");
                 return;
             }
+
+            /*
+            用户不出牌
+            刷新当前
+             */
+            if(poker == null){
+                room.setActivitySeat(room.getNextActivityPlayerSeat());
+                for(Player p : room.getPlayers()){
+                    //将出牌人和出的牌通知到所有玩家
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("seat",player.getSeat());
+                    map.put("nextSeat",room.getActivitySeat());
+                    sendMessage(p.getId(),RoomManager.Response_Discard,map);
+                }
+                return;
+            }
+            /*
+            用户出牌
+             */
+            String[] pokers = userData.get("pokers").toString().split(",");
+
+
             List<Integer> pokerIdList = new ArrayList<>();
             for(String str : pokers){
                 if(str != null && str.trim() != ""){
@@ -376,12 +391,13 @@ public class PokerWebSocket {
                 player.getPokerIds().removeAll(pokerIdList);
                 room.setActivityPoker(pokerIdList);
                 room.setActivityPlayerSeat(player.getSeat());
+                room.setActivitySeat(room.getNextActivityPlayerSeat());
                 for(Player p : room.getPlayers()){
                     //将出牌人和出的牌通知到所有玩家
                     Map<String,Object> map = new HashMap<>();
                     map.put("seat",player.getSeat());
                     map.put("pokers",PokerUtils.parsePokers(pokerIdList));
-                    map.put("nextSeat",room.getNextActivityPlayerSeat());
+                    map.put("nextSeat",room.getActivitySeat());
                     sendMessage(p.getId(),RoomManager.Response_Discard,map);
                 }
                 return;
@@ -390,7 +406,6 @@ public class PokerWebSocket {
             e.printStackTrace();
         }
     }
-
 
 
 }
