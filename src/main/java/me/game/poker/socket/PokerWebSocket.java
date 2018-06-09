@@ -341,12 +341,14 @@ public class PokerWebSocket {
 
             /*
             用户不出牌
-            刷新当前
              */
             if(poker == null){
+                if(room.getActivityPlayerSeat() == player.getSeat()){
+                    sendError(session,1,"必须出牌");
+                    return;
+                }
                 room.setActivitySeat(room.getNextActivityPlayerSeat());
                 for(Player p : room.getPlayers()){
-                    //将出牌人和出的牌通知到所有玩家
                     Map<String,Object> map = new HashMap<>();
                     map.put("seat",player.getSeat());
                     map.put("nextSeat",room.getActivitySeat());
@@ -358,8 +360,6 @@ public class PokerWebSocket {
             用户出牌
              */
             String[] pokers = userData.get("pokers").toString().split(",");
-
-
             List<Integer> pokerIdList = new ArrayList<>();
             for(String str : pokers){
                 if(str != null && str.trim() != ""){
@@ -387,20 +387,38 @@ public class PokerWebSocket {
                 /*
                 从玩家的牌中移除已经出的牌
                 刷新当前出的牌和出牌人座位号
-                 */
+                */
                 player.getPokerIds().removeAll(pokerIdList);
+
+                /*
+                将出牌人和出的牌通知到所有玩家
+                 */
                 room.setActivityPoker(pokerIdList);
                 room.setActivityPlayerSeat(player.getSeat());
                 room.setActivitySeat(room.getNextActivityPlayerSeat());
                 for(Player p : room.getPlayers()){
-                    //将出牌人和出的牌通知到所有玩家
                     Map<String,Object> map = new HashMap<>();
                     map.put("seat",player.getSeat());
                     map.put("pokers",PokerUtils.parsePokers(pokerIdList));
                     map.put("nextSeat",room.getActivitySeat());
                     sendMessage(p.getId(),RoomManager.Response_Discard,map);
                 }
-                return;
+                /*
+                玩家牌出完，通知所有人游戏结束
+                 */
+                if(player.getPokerIds() == null || player.getPokerIds().size() == 0) {
+                    String victory;
+                    if(player.getSeat() == room.getLandlordSeat()){
+                        victory = RoomManager.Victory_Landlord;
+                    }else{
+                        victory = RoomManager.Victory_Farmer;
+                    }
+                    for(Player p : room.getPlayers()){
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("victory", victory);
+                        sendMessage(p.getId(),RoomManager.Response_GameOver,map);
+                    }
+                }
             }
         }catch (Exception e){
             e.printStackTrace();

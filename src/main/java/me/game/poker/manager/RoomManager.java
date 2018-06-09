@@ -118,8 +118,13 @@ public class RoomManager {
      * Server通知有玩家出牌
      */
     public static final int Response_Discard = 2007;
+    public static final int Response_GameOver = 2008;
 
     public static final int Response_ERROR = 3000;
+
+    public static final String Victory_Landlord = "Landlord";
+
+    public static final String Victory_Farmer = "Farmer";
 
 
 }
