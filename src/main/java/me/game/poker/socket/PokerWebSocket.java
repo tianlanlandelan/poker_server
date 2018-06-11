@@ -130,8 +130,12 @@ public class PokerWebSocket {
      */
     public void sendMessage(Session session, int code ,Object data) {
         try {
-            logger.info("response:" + response(code,data));
-            session.getBasicRemote().sendText(response(code,data));
+            if(livingSessions.get(session.getId()) != null){
+                logger.info("response:" + response(code,data));
+                session.getBasicRemote().sendText(response(code,data));
+            }else{
+                
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
