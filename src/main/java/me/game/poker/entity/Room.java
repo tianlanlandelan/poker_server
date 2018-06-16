@@ -10,9 +10,13 @@ import java.util.*;
  */
 public class Room {
     /**
-     * 房间号
+     * 房间Id
      */
     private String id = UUID.randomUUID().toString();
+    /**
+     * 房间号 6位数字组成，可以通过输入房间号进入房间
+     */
+    private Integer num;
 
     /**
      * 房间内的所有玩家
@@ -170,19 +174,28 @@ public class Room {
         this.activitySeat = activitySeat;
     }
 
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
     @Override
     public String toString() {
         return "Room{" +
                 "id='" + id + '\'' +
+                ", num=" + num +
                 ", players=" + players +
                 ", type=" + type +
                 ", createTime=" + createTime +
                 ", state=" + state +
                 ", activityPoker=" + activityPoker +
-                ", activitySeat=" + activitySeat +
+                ", activityPlayerSeat=" + activityPlayerSeat +
                 ", publicPoker=" + publicPoker +
                 ", landlordSeat=" + landlordSeat +
-                ", activityPlayerSeat=" + activityPlayerSeat +
+                ", activitySeat=" + activitySeat +
                 '}';
     }
 }
