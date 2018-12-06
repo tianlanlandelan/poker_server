@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by yangkaile on 2018/4/6.
+ * @author yangkaile
+ * @date 2018/4/6.
  * 玩家实体类
  */
 public class Player {
